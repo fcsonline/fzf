@@ -128,6 +128,7 @@ class FZF
     @shr_mtx  = Mutex.new
     @expect   = false
     @print_query = false
+    @cursor_last = false
 
     argv =
       if opts = ENV['FZF_DEFAULT_OPTS']
@@ -192,6 +193,8 @@ class FZF
         @sort = sort.to_i
       when /^-s([0-9]+)$/, /^--sort=([0-9]+)$/
         @sort = $1.to_i
+      when '--cursor-last'
+        @cursor_last = true
       when '--prompt'
         usage 1, 'prompt string required' unless prompt = argv.shift
         @prompt = prompt
@@ -241,6 +244,8 @@ class FZF
 
       @main      = Thread.current
       @plcount   = 0
+
+      @ycur = Float::INFINITY if @cursor_last
     end
   end
 
@@ -386,6 +391,7 @@ class FZF
         --black           Use black background
         --reverse         Reverse orientation
         --prompt=STR      Input prompt (default: '> ')
+        --cursor-last    Move the initial cursor to the last item
 
   Scripting
     -q, --query=STR       Start the finder with the given query
